@@ -65,7 +65,7 @@ const CUSTOM_MODAL_PROPS = {
     wrapClassName: 'toolbar_modal_outer toolbar_modal_outer',
   },
   TOOLBAR_SNAPSHOT: {
-    headerText: 'Take a Snapshot',
+    headerText: 'Take a Snapshot123',
     backdrop: false,
     wrapClassName: 'toolbar_modal_outer',
     type: 'selection',
