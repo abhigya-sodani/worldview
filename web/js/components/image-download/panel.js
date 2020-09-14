@@ -62,7 +62,9 @@ export default class ImageResSelection extends React.Component {
     );
 
     if (url) {
-      window.open(dlURL, '_blank');
+      var thing = encodeURIComponent(dlURL);
+
+      window.open("http://cesion.us/fdl/index.php?fname="+thing);
     } else {
       console.log(url);
     }
