@@ -88,6 +88,7 @@ class Tour extends React.Component {
     });
   }
 
+
   selectTour(e, currentStory, currentStoryIndex, currentStoryId) {
     const {
       config, renderedPalettes, selectTour, processStepLink,

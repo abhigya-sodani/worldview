@@ -13,6 +13,11 @@ import Button from '../util/button';
  * @extends React.Component
  */
 export default class ResolutionTable extends React.Component {
+  state = { show: false };
+  url = {url:""};
+
+
+
   renderImageSize() {
     const { fileSize, validSize } = this.props;
     if (!validSize) {
@@ -39,7 +44,7 @@ export default class ResolutionTable extends React.Component {
   render() {
     const imageSize = this.renderImageSize();
     const {
-      width, height, maxImageSize, onClick, validLayers, validSize,
+      width, height, maxImageSize, onClick, validLayers, validSize, url
     } = this.props;
     return (
       <div className="wv-image-download-grid">
@@ -65,6 +70,7 @@ export default class ResolutionTable extends React.Component {
         >
           <span>{`${width} x ${height}px`}</span>
         </div>
+
         <div className="grid-child wv-image-button">
           <Button
             text="Download"
@@ -86,4 +92,5 @@ ResolutionTable.propTypes = {
   validLayers: PropTypes.bool,
   validSize: PropTypes.bool,
   width: PropTypes.number,
+
 };

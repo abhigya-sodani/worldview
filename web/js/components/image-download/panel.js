@@ -9,6 +9,9 @@ import {
 
 import SelectionList from '../util/selector';
 import ResTable from './grid';
+import modalGen from './modalGen';
+import './modal.css';
+
 
 const MAX_DIMENSION_SIZE = 8200;
 const RESOLUTION_KEY = {
@@ -21,6 +24,23 @@ const RESOLUTION_KEY = {
   20: '5km',
   40: '10km',
 };
+
+
+const Modal = ({ handleClose, show, children, url}) => {
+  const showHideClassName = show ? "modal display-block" : "modal display-none";
+
+  return (
+    <div className={showHideClassName}>
+      <section className="modal-main">
+        {children}
+        {/* <iframe src={url} ></iframe> */}
+        <p>Hello World</p>
+        <button onClick={handleClose}>close</button>
+      </section>
+    </div>
+  );
+};
+
 /*
  * A react component, Builds a rather specific
  * interactive widget
@@ -29,6 +49,13 @@ const RESOLUTION_KEY = {
  * @extends React.Component
  */
 export default class ImageResSelection extends React.Component {
+  showModal = () => {
+    this.setState({ show: true });
+  };
+
+  hideModal = () => {
+    this.setState({ show: false });
+  };
   constructor(props) {
     super(props);
 
@@ -37,6 +64,8 @@ export default class ImageResSelection extends React.Component {
       isWorldfile: props.isWorldfile,
       resolution: props.resolution,
       debugUrl: '',
+      show:true,
+      url:''
     };
     this.handleChange = this.handleChange.bind(this);
     this.onDownload = this.onDownload.bind(this);
@@ -62,7 +91,14 @@ export default class ImageResSelection extends React.Component {
     );
 
     if (url) {
-      window.open(dlURL, '_blank');
+      var thing = encodeURIComponent(dlURL);
+      var thing1="http://cesion.us/fdl/index.php?fname="+thing;
+      this.showModal();
+      this.setState({ url:thing1 });
+      this.render();
+      alert("LOL");
+
+
     } else {
       console.log(url);
     }
@@ -157,7 +193,12 @@ export default class ImageResSelection extends React.Component {
     const worldfileSelect = this._renderWorldfileSelect();
     const layerList = getLayers();
     return (
+
       <div className="wv-re-pick-wrapper wv-image">
+        <Modal show={this.state.show} url={this.state.url} handleClose={this.hideModal}>
+          <p>Modal</p>
+          <p>Data</p>
+       </Modal>
         <div
           id="wv-image-download-url"
           style={{ display: 'none' }}
