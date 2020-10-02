@@ -10,7 +10,10 @@ import {
 import Promise from 'bluebird';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faShareSquare, faGlobeAsia, faCamera, faInfoCircle,
+  faShareSquare,
+  faGlobeAsia,
+  faCamera,
+  faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import { openCustomContent, onToggle } from '../modules/modal/actions';
 import toggleDistractionFreeMode from '../modules/ui/actions';
@@ -34,7 +37,7 @@ import { notificationWarnings } from '../modules/image-download/constants';
 import Notify from '../components/image-download/notify';
 import { hasCustomPaletteInActiveProjection } from '../modules/palettes/util';
 import { getLayers } from '../modules/layers/selectors';
-
+import NNResultsProvider from '../components/nearest-neighbor/nn-results-provider';
 
 Promise.config({ cancellation: true });
 
@@ -92,7 +95,13 @@ class toolbarContainer extends Component {
 
   openImageDownload() {
     const {
-      openModal, hasCustomPalette, isRotated, hasGraticule, activePalettes, rotation, refreshStateAfterImageDownload,
+      openModal,
+      hasCustomPalette,
+      isRotated,
+      hasGraticule,
+      activePalettes,
+      rotation,
+      refreshStateAfterImageDownload,
     } = this.props;
 
     const paletteStore = lodashCloneDeep(activePalettes);
@@ -102,28 +111,27 @@ class toolbarContainer extends Component {
           isRotated,
           'rotate',
           clearRotate,
-          'Reset rotation',
+          'Reset rotation'
         ).then(() => {
           this.getPromise(
             hasGraticule,
             'graticule',
             clearGraticule,
-            'Remove Graticule?',
+            'Remove Graticule?'
           ).then(() => {
-            openModal(
-              'TOOLBAR_SNAPSHOT',
-              {
-                ...CUSTOM_MODAL_PROPS.TOOLBAR_SNAPSHOT,
-                onClose: () => {
-                  refreshStateAfterImageDownload(
-                    hasCustomPalette ? paletteStore : undefined, rotation, hasGraticule,
-                  );
-                },
+            openModal('TOOLBAR_SNAPSHOT', {
+              ...CUSTOM_MODAL_PROPS.TOOLBAR_SNAPSHOT,
+              onClose: () => {
+                refreshStateAfterImageDownload(
+                  hasCustomPalette ? paletteStore : undefined,
+                  rotation,
+                  hasGraticule
+                );
               },
-            );
+            });
           });
         });
-      },
+      }
     );
   }
 
@@ -137,8 +145,7 @@ class toolbarContainer extends Component {
         notificationURL = `mock/notify_${config.parameters.mockAlerts}.json`;
       } else if (config.parameters.notificationURL) {
         console.log('mock notificationURL');
-        notificationURL = `https://status.earthdata.nasa.gov/api/v1/notifications?domain=${
-          config.parameters.notificationURL}`;
+        notificationURL = `https://status.earthdata.nasa.gov/api/v1/notifications?domain=${config.parameters.notificationURL}`;
       }
       requestNotifications(notificationURL);
     }
@@ -153,26 +160,26 @@ class toolbarContainer extends Component {
       isDistractionFreeModeActive,
       isImageDownloadActive,
       isCompareActive,
+      showNearestNeighborResults,
     } = this.props;
     const notificationClass = notificationType
       ? ` wv-status-${notificationType}`
       : ' wv-status-hide';
     return (
       <ErrorBoundary>
-        <ButtonToolbar
-          id="wv-toolbar"
-          className="wv-toolbar"
-        >
-          { !isDistractionFreeModeActive && (
+        <ButtonToolbar id="wv-toolbar" className="wv-toolbar">
+          {!isDistractionFreeModeActive && (
             <>
               <Button
                 id="wv-link-button"
                 className="wv-toolbar-button"
                 title="Share this map"
-                onClick={() => openModal(
-                  'TOOLBAR_SHARE_LINK',
-                  CUSTOM_MODAL_PROPS.TOOLBAR_SHARE_LINK,
-                )}
+                onClick={() =>
+                  openModal(
+                    'TOOLBAR_SHARE_LINK',
+                    CUSTOM_MODAL_PROPS.TOOLBAR_SHARE_LINK
+                  )
+                }
               >
                 <FontAwesomeIcon icon={faShareSquare} size="2x" />
               </Button>
@@ -181,15 +188,18 @@ class toolbarContainer extends Component {
                   id="wv-proj-button"
                   className="wv-toolbar-button"
                   title="Switch projection"
-                  onClick={() => openModal(
-                    'TOOLBAR_PROJECTION',
-                    CUSTOM_MODAL_PROPS.TOOLBAR_PROJECTION,
-                  )}
+                  onClick={() =>
+                    openModal(
+                      'TOOLBAR_PROJECTION',
+                      CUSTOM_MODAL_PROPS.TOOLBAR_PROJECTION
+                    )
+                  }
                 >
                   <FontAwesomeIcon icon={faGlobeAsia} size="2x" />
                 </Button>
-              )
-                : ''}
+              ) : (
+                ''
+              )}
               <Button
                 id="wv-image-button"
                 className={
@@ -202,8 +212,8 @@ class toolbarContainer extends Component {
                   isCompareActive
                     ? 'You must exit comparison mode to use the snapshot feature'
                     : !isImageDownloadActive
-                      ? 'You must exit data download mode to use the snapshot feature'
-                      : 'Take a snapshot'
+                    ? 'You must exit data download mode to use the snapshot feature'
+                    : 'Take a snapshot'
                 }
                 onClick={this.openImageDownload}
               >
@@ -214,8 +224,15 @@ class toolbarContainer extends Component {
           <Button
             id="wv-info-button"
             title="Information"
-            className={`wv-toolbar-button${notificationClass} ${isDistractionFreeModeActive ? 'wv-info-button-distraction-free-mode' : ''}`}
-            onClick={() => openModal('TOOLBAR_INFO', CUSTOM_MODAL_PROPS.TOOLBAR_INFO)}
+            className={`wv-toolbar-button${notificationClass} ${
+              isDistractionFreeModeActive
+                ? 'wv-info-button-distraction-free-mode'
+                : ''
+            }`}
+            onClick={
+              //() => openModal('TOOLBAR_INFO', CUSTOM_MODAL_PROPS.TOOLBAR_INFO)
+              () => showNearestNeighborResults()
+            }
             data-content={notificationContentNumber}
           >
             <FontAwesomeIcon icon={faInfoCircle} size="2x" />
@@ -227,7 +244,14 @@ class toolbarContainer extends Component {
 }
 function mapStateToProps(state) {
   const {
-    notifications, palettes, compare, map, layers, proj, data, ui,
+    notifications,
+    palettes,
+    compare,
+    map,
+    layers,
+    proj,
+    data,
+    ui,
   } = state;
   const { isDistractionFreeModeActive } = ui;
   const { number, type } = notifications;
@@ -235,7 +259,7 @@ function mapStateToProps(state) {
   const activeLayersForProj = getLayers(
     layers[activeString],
     { proj: proj.id },
-    state,
+    state
   );
   const isCompareActive = compare.active;
   const isDataDownloadActive = data.active;
@@ -247,22 +271,22 @@ function mapStateToProps(state) {
     rotation: map.rotation,
     activePalettes,
     isImageDownloadActive: Boolean(
-      lodashGet(state, 'map.ui.selected')
-      && !isCompareActive
-      && !isDataDownloadActive,
+      lodashGet(state, 'map.ui.selected') &&
+        !isCompareActive &&
+        !isDataDownloadActive
     ),
     isCompareActive,
     hasCustomPalette: hasCustomPaletteInActiveProjection(
       activeLayersForProj,
-      activePalettes,
+      activePalettes
     ),
 
     isRotated: Boolean(map.rotation !== 0),
     hasGraticule: Boolean(
       lodashGet(
         lodashFind(layers[activeString], { id: 'Graticule' }) || {},
-        'visible',
-      ),
+        'visible'
+      )
     ),
     isDistractionFreeModeActive,
   };
@@ -283,35 +307,33 @@ const mapDispatchToProps = (dispatch) => ({
     }
   },
   openModal: (key, customParams, actions) => {
-    dispatch(openCustomContent(
-      key,
-      customParams,
-    ));
+    dispatch(openCustomContent(key, customParams));
   },
-  notify: (type, action, title) => new Promise((resolve, reject, cancel) => {
-    const bodyComponentProps = {
-      bodyText: notificationWarnings[type],
-      cancel: () => {
-        dispatch(onToggle());
-      },
-      accept: () => {
-        dispatch(action());
-        resolve();
-      },
-    };
-    dispatch(
-      openCustomContent(`image_download_notify_${type}`, {
-        headerText: 'Notify',
-        bodyComponent: Notify,
-        size: 'sm',
-        modalClassName: 'notify',
-        bodyComponentProps,
-      }),
-    );
-  }),
+  notify: (type, action, title) =>
+    new Promise((resolve, reject, cancel) => {
+      const bodyComponentProps = {
+        bodyText: notificationWarnings[type],
+        cancel: () => {
+          dispatch(onToggle());
+        },
+        accept: () => {
+          dispatch(action());
+          resolve();
+        },
+      };
+      dispatch(
+        openCustomContent(`image_download_notify_${type}`, {
+          headerText: 'Notify',
+          bodyComponent: Notify,
+          size: 'sm',
+          modalClassName: 'notify',
+          bodyComponentProps,
+        })
+      );
+    }),
   requestNotifications: (location) => {
     const promise = dispatch(
-      requestNotifications(location, REQUEST_NOTIFICATIONS, 'json'),
+      requestNotifications(location, REQUEST_NOTIFICATIONS, 'json')
     );
     promise.then((data) => {
       const obj = JSON.parse(data);
@@ -320,12 +342,20 @@ const mapDispatchToProps = (dispatch) => ({
       }
     });
   },
+  showNearestNeighborResults: () => {
+    dispatch(
+      openCustomContent('BLAH', {
+        headerText: null,
+        modalClassName: 'custom-layer-dialog light',
+        backdrop: true,
+        CompletelyCustomModal: NNResultsProvider,
+        wrapClassName: '',
+      })
+    );
+  },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(toolbarContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(toolbarContainer);
 
 toolbarContainer.propTypes = {
   activePalettes: PropTypes.object,
@@ -342,5 +372,6 @@ toolbarContainer.propTypes = {
   openModal: PropTypes.func,
   refreshStateAfterImageDownload: PropTypes.func,
   requestNotifications: PropTypes.func,
+  showNearestNeighborResults: PropTypes.func,
   rotation: PropTypes.number,
 };

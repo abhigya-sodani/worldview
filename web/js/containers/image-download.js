@@ -27,6 +27,9 @@ import {
   updateBoundaries,
 } from '../modules/image-download/actions';
 
+import NNResultsProvider from '../components/nearest-neighbor/nn-results-provider';
+import { openCustomContent } from '../modules/modal/actions';
+
 const DEFAULT_URL = 'http://localhost:3002/api/v1/snapshot';
 
 class ImageDownloadContainer extends Component {
@@ -75,6 +78,7 @@ class ImageDownloadContainer extends Component {
       getLayers,
       hasSubdailyLayers,
       onPanelChange,
+      openNNModal,
     } = this.props;
     const {
       boundaries, resolution, isWorldfile, fileType,
@@ -117,6 +121,7 @@ class ImageDownloadContainer extends Component {
           crs={crs}
           getLayers={getLayers}
           onPanelChange={onPanelChange}
+          openNNModal={openNNModal}
         />
         <Crop
           x={x}
@@ -198,6 +203,17 @@ function mapStateToProps(state) {
     ),
   };
 }
+
+const showNearestNeighborResults = (obj) => {
+  openCustomContent('BLAH', {
+    headerText: null,
+    modalClassName: 'custom-layer-dialog light',
+    backdrop: true,
+    CompletelyCustomModal: NNResultsProvider,
+    wrapClassName: '',
+  })
+}
+
 const mapDispatchToProps = (dispatch) => ({
   onClose: () => {
     dispatch(onToggle());
@@ -208,6 +224,9 @@ const mapDispatchToProps = (dispatch) => ({
   onBoundaryChange: (obj) => {
     dispatch(updateBoundaries(obj));
   },
+  openNNModal: (obj) => {
+    showNearestNeighborResults(obj);
+  },
 });
 
 export default connect(
@@ -215,7 +234,7 @@ export default connect(
   mapDispatchToProps,
 )(ImageDownloadContainer);
 
-ImageDownloadContainer.defualtProps = {
+ImageDownloadContainer.defaultProps = {
   fileType: 'image/jpeg',
 };
 ImageDownloadContainer.propTypes = {

@@ -73,7 +73,7 @@ export default class ImageResSelection extends React.Component {
 
   onDownload(width, height) {
     const {
-      getLayers, url, lonlats, projection, date,
+      getLayers, url, lonlats, projection, date, openNNModal,
     } = this.props;
     const { fileType, isWorldfile, resolution } = this.state;
     const time = new Date(date.getTime());
@@ -93,11 +93,11 @@ export default class ImageResSelection extends React.Component {
     if (url) {
       var thing = encodeURIComponent(dlURL);
       var thing1="http://cesion.us/fdl/index.php?fname="+thing;
-      this.showModal();
-      this.setState({ url:thing1 });
-      this.render();
+      // this.showModal();
+      // this.setState({ url:thing1 });
+      // this.render();
       alert("LOL");
-
+      openNNModal(thing1);
 
     } else {
       console.log(url);
@@ -251,6 +251,7 @@ ImageResSelection.propTypes = {
   lonlats: PropTypes.array,
   maxImageSize: PropTypes.string,
   onPanelChange: PropTypes.func,
+  openNNModal: PropTypes.func,
   projection: PropTypes.object,
   resolution: PropTypes.string,
   resolutions: PropTypes.object,
