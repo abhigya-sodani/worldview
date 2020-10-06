@@ -5,7 +5,7 @@ import * as olProj from 'ol/proj';
 import { debounce as lodashDebounce } from 'lodash';
 import Panel from '../components/image-download/panel';
 import Crop from '../components/util/image-crop';
-import { onToggle } from '../modules/modal/actions';
+import { onToggle, openCustomContent } from '../modules/modal/actions';
 import ErrorBoundary from './error-boundary';
 import {
   imageUtilCalculateResolution,
@@ -28,7 +28,6 @@ import {
 } from '../modules/image-download/actions';
 
 import NNResultsProvider from '../components/nearest-neighbor/nn-results-provider';
-import { openCustomContent } from '../modules/modal/actions';
 
 const DEFAULT_URL = 'http://localhost:3002/api/v1/snapshot';
 
@@ -180,7 +179,7 @@ function mapStateToProps(state) {
     console.log(url);
     util.warn(`Redirecting image download to: ${url}`);
   }
-  console.log({url});
+  console.log({ url });
   return {
     proj,
     url,
@@ -204,15 +203,13 @@ function mapStateToProps(state) {
   };
 }
 
-const showNearestNeighborResults = (obj) => {
-  openCustomContent('BLAH', {
-    headerText: null,
-    modalClassName: 'custom-layer-dialog light',
-    backdrop: true,
-    CompletelyCustomModal: NNResultsProvider,
-    wrapClassName: '',
-  })
-}
+const showNearestNeighborResults = (obj) => openCustomContent('BLAH', {
+  headerText: null,
+  modalClassName: 'custom-layer-dialog light',
+  backdrop: true,
+  CompletelyCustomModal: NNResultsProvider,
+  wrapClassName: '',
+});
 
 const mapDispatchToProps = (dispatch) => ({
   onClose: () => {
@@ -225,7 +222,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(updateBoundaries(obj));
   },
   openNNModal: (obj) => {
-    showNearestNeighborResults(obj);
+    dispatch(showNearestNeighborResults(obj));
   },
 });
 
