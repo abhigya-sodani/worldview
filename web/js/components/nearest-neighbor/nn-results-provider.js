@@ -15,9 +15,9 @@ class NNResultsProvider extends React.Component {
   render() {
     const { searchConfig } = this.props;
     return !searchConfig ? null : (
-      <div>
-        <p>HELLO WORLD</p>
-        <img src="https://www.nesdis.noaa.gov/sites/default/files/assets/images/infrared_imagery.jpg"/>
+      <div height="600px"  width="1000px">
+
+        <iframe height="600px" width="1000px" src={this.props.urlLoad}></iframe>
       </div>
     );
   }

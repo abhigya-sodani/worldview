@@ -203,13 +203,16 @@ function mapStateToProps(state) {
   };
 }
 
-const showNearestNeighborResults = (obj) => openCustomContent('BLAH', {
+const showNearestNeighborResults = (obj) => {
+
+  return openCustomContent('BLAH', {
   headerText: null,
   modalClassName: 'custom-layer-dialog light',
   backdrop: true,
   CompletelyCustomModal: NNResultsProvider,
   wrapClassName: '',
-});
+  urlLoad:obj
+});}
 
 const mapDispatchToProps = (dispatch) => ({
   onClose: () => {
@@ -222,6 +225,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(updateBoundaries(obj));
   },
   openNNModal: (obj) => {
+
     dispatch(showNearestNeighborResults(obj));
   },
 });

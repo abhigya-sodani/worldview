@@ -180,17 +180,17 @@
 /* TOUR IN PROGRESS */
 .tour-in-progress {
   .modal {
-    left: auto;
+    left: 0;
     right: 0;
     top: auto;
-    width: 248px;
+    width: 1000px;
     bottom: 343px;
-    height: 200px;
+    height: 600px;
     overflow: visible;
   }
   .modal-dialog {
     position: absolute;
-    width: 248px;
+    width: 1000px;
     right: 0;
     top: 0;
     padding: 0;
@@ -198,11 +198,11 @@
     border: none;
   }
   .modal-content {
-    height: 350px;
+    height: 600px;
   }
   .modal-dialog .modal-content {
-    min-width: 248px;
-    max-height: 357px;
+    min-width: 1000px;
+    max-height: 600px;
     background-color: rgba(255, 255, 255, 0.85);
     border-radius: 8px 0 0 8px;
     border: none;

@@ -96,7 +96,7 @@ export default class ImageResSelection extends React.Component {
       // this.showModal();
       // this.setState({ url:thing1 });
       // this.render();
-      alert("LOL");
+
       openNNModal(thing1);
 
     } else {
